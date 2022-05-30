@@ -7,6 +7,7 @@ namespace ChatApi.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int OwnerId { get; set; }
+        public bool IsPrivate { get; set; }
         public int UnreadMessages { get; set; }
         public List<UserInfo> ChatUsers { get; set; }
         public List<UserInfo> HistoryUsers { get; set; }

@@ -5,28 +5,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Images\Attachments\NewFolder\**" />
+    <Content Remove="Images\Attachments\NewFolder\**" />
+    <EmbeddedResource Remove="Images\Attachments\NewFolder\**" />
+    <None Remove="Images\Attachments\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Databases" />
-    <Folder Include="Images\Attachments\NewFolder\" />
     <Folder Include="Images\Avatars" />
   </ItemGroup>
 
 
   <ItemGroup>
     <None Remove="Images\ChatPictures\" />
-    <None Remove="Databases\chat.db" />
-    <None Remove="Databases\chat.db" />
-    <None Remove="Databases\chat.db" />
-    <None Remove="Databases\chat.db" />
-    <None Remove="Databases\chat.db" />
-    <None Remove="Databases\chat.db" />
-    <None Remove="Databases\chat.db" />
-    <None Remove="Databases\chat.db" />
-    <None Remove="Databases\chat.db" />
   </ItemGroup>
 </Project>

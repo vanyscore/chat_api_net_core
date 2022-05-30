@@ -7,5 +7,6 @@ namespace ChatApi.EntityFramework.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int OwnerId { get; set; }
+        public bool IsPrivate { get; set; }
     }
 }

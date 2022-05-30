@@ -106,6 +106,7 @@ namespace ChatApi.Controllers
                 Id = chatId,
                 OwnerId = chat.OwnerId,
                 Name = chat.Name,
+                IsPrivate = chat.IsPrivate,
                 UnreadMessages = messages.Where((m) => m.Id > chatUserInfo.LastReadMessageId).Count(),
                 ChatUsers = users.Where(
                     usr => chatUsers.SingleOrDefault(
@@ -318,14 +319,14 @@ namespace ChatApi.Controllers
             };
         }
 
-        
+
         [HttpPatch("chat/{chatId:int}/edit")]
         public ActionResult<BaseResponse<object>> UpdateChatName(
             int chatId, [FromBody] ChangeNameRequest request
         )
         {
             var chatName = request.Name;
-            
+
             if (string.IsNullOrEmpty(chatName))
             {
                 return new BaseResponse<object>()
@@ -333,7 +334,7 @@ namespace ChatApi.Controllers
                     Error = "Имя чата не должно быть пустым"
                 };
             }
-            
+
             var chat = _context.ChatRooms.Find(chatId);
 
             if (chat.Name == chatName)
@@ -377,6 +378,69 @@ namespace ChatApi.Controllers
             var userId = ((User)HttpContext.Items["User"]).Id;
 
             return _unreadMessagesHelper.GetUnreadMessages(userId);
+        }
+
+        [HttpPost("chat/private/create/{userId:int}")]
+        public ActionResult<int> CreatePrivateChat(int userId)
+        {
+            var userFrom = (User) HttpContext.Items["User"];
+            var userTo = _context.Users.SingleOrDefault((u) => u.Id == userId);
+            var chats = _context.ChatRooms;
+
+            ChatRoom chatRoom = null;
+
+            foreach (var chat in chats)
+            {
+                var usersOfChat = _context.ChatUsers.Where((c) => c.ChatRoomId == chat.Id);
+
+                if (usersOfChat.Count() == 2)
+                {
+                    var userFromContains = usersOfChat.SingleOrDefault((u) => u.UserId == userFrom.Id) != null;
+                    var userToContains = usersOfChat.SingleOrDefault((u) => u.UserId == userTo.Id) != null;
+
+                    if (userFromContains && userToContains)
+                    {
+                        chatRoom = chat;
+                        break;
+                    }
+                }
+            }
+
+            if (chatRoom != null)
+            {
+                return chatRoom.Id;
+            }
+            else
+            {
+                chatRoom = new ChatRoom()
+                {
+                    IsPrivate = true,
+                    Name = null,
+                    OwnerId = userFrom.Id
+                };
+                _context.ChatRooms.Add(chatRoom);
+                _context.SaveChanges();
+
+                _context.ChatUsers.Add(new ChatUser()
+                {
+                    ChatRoomId = chatRoom.Id,
+                    LastReadMessageId = 0,
+                    IsRemoved = false,
+                    UserId = userFrom.Id
+                });
+
+                _context.ChatUsers.Add(new ChatUser()
+                {
+                    ChatRoomId = chatRoom.Id,
+                    LastReadMessageId = 0,
+                    IsRemoved = false,
+                    UserId = userTo.Id
+                });
+
+                _context.SaveChanges();
+
+                return chatRoom.Id;
+            }
         }
     }
 }
