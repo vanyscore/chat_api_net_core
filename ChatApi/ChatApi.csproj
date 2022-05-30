@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Databases" />
+    <Folder Include="Images\Avatars" />
+    <Folder Include="Images\Attachments\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Remove="Images\ChatPictures\" />
+    <None Remove="Databases\chat.db" />
+    <None Remove="Databases\chat.db" />
+    <None Remove="Databases\chat.db" />
+    <None Remove="Databases\chat.db" />
+    <None Remove="Databases\chat.db" />
+    <None Remove="Databases\chat.db" />
+    <None Remove="Databases\chat.db" />
+    <None Remove="Databases\chat.db" />
+    <None Remove="Databases\chat.db" />
+  </ItemGroup>
+</Project>
