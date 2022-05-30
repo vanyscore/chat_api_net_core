@@ -1,3 +1,5 @@
 /bin
 /obj
-/Images/Attachments
+Images/Attachments/*
+
+!Images/Attachments/.gitkeep

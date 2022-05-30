@@ -12,8 +12,8 @@
 
   <ItemGroup>
     <Folder Include="Databases" />
+    <Folder Include="Images\Attachments\NewFolder\" />
     <Folder Include="Images\Avatars" />
-    <Folder Include="Images\Attachments\" />
   </ItemGroup>
 
 
