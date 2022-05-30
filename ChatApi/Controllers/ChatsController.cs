@@ -48,6 +48,17 @@ namespace ChatApi.Controllers
                 .Select(usr => _context.ChatRooms.Find(usr.ChatRoomId))
                 .Select(ch => GetChatInfo(ch.Id)).ToList();
 
+            var common = result.Where((c) => !c.IsPrivate).ToList();
+            var privatChats = result.Where((c) => c.IsPrivate).ToList();
+
+            common.Sort((c1, c2) => c1.UnreadMessages > c2.UnreadMessages ? -1 : 1);
+            privatChats.Sort((c1, c2) => c1.UnreadMessages > c2.UnreadMessages ? -1 : 1);
+
+            result.Clear();
+
+            result.AddRange(common);
+            result.AddRange(privatChats);
+                 
             return result;
         }
 
@@ -95,7 +106,9 @@ namespace ChatApi.Controllers
             });
 
             var messages = _context.ChatMessages
-                .Where((m) => m.ChatId == chatId);
+                .Include((m) => m.Image)
+                .Where((m) => m.ChatId == chatId)
+                .Select((m) => Models.Responses.ChatMessage.FromDB(m, HttpContext)).ToList();
 
             var userId = ((User)HttpContext.Items["User"]).Id;
             var chatUserInfo = chatUsers
@@ -107,6 +120,7 @@ namespace ChatApi.Controllers
                 OwnerId = chat.OwnerId,
                 Name = chat.Name,
                 IsPrivate = chat.IsPrivate,
+                LastMessage = messages.LastOrDefault(),
                 UnreadMessages = messages.Where((m) => m.Id > chatUserInfo.LastReadMessageId).Count(),
                 ChatUsers = users.Where(
                     usr => chatUsers.SingleOrDefault(
