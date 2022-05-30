@@ -195,6 +195,8 @@ namespace ChatApi.Controllers
             _context.ChatUsers.AddRange(chatUsers);
             _context.SaveChanges();
 
+            NotifyChatUpdated(chatUsers.Select((c) => c.UserId).ToList(), createdChat.Id, true);
+
             return Ok();
 
         }
@@ -287,6 +289,8 @@ namespace ChatApi.Controllers
                         _context.ChatUsers.Update(chatUser);
                         _context.SaveChanges();
 
+                        NotifyChatUpdated(new List<int>() { chatUser.UserId }, chatId, true);
+
                         return Ok();
                     }
 
@@ -306,6 +310,8 @@ namespace ChatApi.Controllers
                 );
                 _context.SaveChanges();
 
+                NotifyChatUpdated(new List<int>() { userId }, chatId, true);
+
                 return Ok();
             }
 
@@ -317,6 +323,8 @@ namespace ChatApi.Controllers
 
                     _context.ChatUsers.Update(chatUser);
                     _context.SaveChanges();
+
+                    NotifyChatUpdated(new List<int>() { chatUser.UserId }, chatId, false);
 
                     return Ok();
                 }
@@ -453,8 +461,18 @@ namespace ChatApi.Controllers
 
                 _context.SaveChanges();
 
+                NotifyChatUpdated(new List<int>() { userFrom.Id, userTo.Id }, chatRoom.Id, true);
+
                 return chatRoom.Id;
             }
+        }
+
+        private void NotifyChatUpdated(List<int> users, int chatId, bool? isAdd)
+        {
+            users.ForEach((id) =>
+            {
+                _hubContext.Clients.Group("user_" + id).SendAsync("OnChatUpdated", new JsonResult(GetChatInfo(chatId)), isAdd);
+            });
         }
     }
 }
