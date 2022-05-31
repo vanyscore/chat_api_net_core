@@ -57,6 +57,7 @@ namespace ChatApi
             );
             services.AddScoped<AuthService>();
             services.AddScoped<MessagesHelper>();
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,7 +71,12 @@ namespace ChatApi
             // app.UseHttpsRedirection();
             
             app.UseRouting();
-            app.UseCors();
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyHeader();
+                builder.AllowAnyMethod();
+            });
 
             app.UseMiddleware<JwtMiddleware>();
 
@@ -83,8 +89,8 @@ namespace ChatApi
             using var scope = app.ApplicationServices.CreateScope();
             using var context = scope.ServiceProvider.GetService<ChatContext>();
 
-            context.Database.EnsureDeleted();
-            context.Database.EnsureCreated();
+            // context.Database.EnsureDeleted();
+            // context.Database.EnsureCreated();
         }
     }
 }
